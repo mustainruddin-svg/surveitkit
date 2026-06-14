@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Survei Kepuasan — TKIT Ar-Rahmah</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #3AAEDC;
+    --sky-light: #E8F7FD;
+    --sky-mid: #B8E4F5;
+    --gold: #C9963A;
+    --gold-light: #F7ECD9;
+    --white: #FFFFFF;
+    --dark: #1A2A35;
+    --muted: #6B8A9A;
+    --border: #D6EAF4;
+    --success: #27AE60;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: linear-gradient(135deg, #EAF6FC 0%, #F7ECD9 100%);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+
+  .header { text-align: center; margin-bottom: 32px; }
+
+  .logo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    box-shadow: 0 2px 12px rgba(58,174,220,0.15);
+    margin-bottom: 20px;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--sky);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .logo-text { font-size: 13px; font-weight: 600; color: var(--dark); letter-spacing: 0.3px; }
+  .logo-text span { color: var(--sky); }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 5vw, 34px);
+    color: var(--dark);
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .subtitle { color: var(--muted); font-size: 14px; font-weight: 300; }
+
+  .card {
+    background: white;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 4px 24px rgba(26,42,53,0.07);
+    max-width: 640px;
+    margin: 0 auto 20px;
+  }
+
+  .step-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--dark);
+    margin-bottom: 18px;
+  }
+
+  .field { margin-bottom: 14px; }
+
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--dark);
+    margin-bottom: 6px;
+  }
+
+  .field input, .field select {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--dark);
+    background: #FAFEFF;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .field input:focus, .field select:focus {
+    border-color: var(--sky);
+    background: white;
+  }
+
+  .question-block { margin-bottom: 22px; }
+
+  .q-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--dark);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+
+  .q-num {
+    display: inline-block;
+    background: var(--sky);
+    color: white;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 22px;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+
+  .scale-row { display: flex; gap: 6px; }
+
+  .scale-btn {
+    flex: 1;
+    padding: 9px 4px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    text-align: center;
+    transition: all 0.15s;
+  }
+
+  .scale-btn:hover {
+    border-color: var(--sky);
+    color: var(--sky);
+    background: var(--sky-light);
+  }
+
+  .scale-btn.sel-1 { background: #FDECEA; border-color: #E74C3C; color: #E74C3C; }
+  .scale-btn.sel-2 { background: #FEF3E2; border-color: #E67E22; color: #E67E22; }
+  .scale-btn.sel-3 { background: #FEF9E7; border-color: #F1C40F; color: #B7900A; }
+  .scale-btn.sel-4 { background: #EAFAF1; border-color: #27AE60; color: #1E8449; }
+  .scale-btn.sel-5 { background: #EAF4FD; border-color: var(--sky); color: var(--sky); }
+
+  .scale-labels { display: flex; justify-content: space-between; margin-top: 5px; }
+  .scale-labels span { font-size: 10px; color: var(--muted); }
+
+  /* Radio option buttons (pertanyaan pilihan ganda) */
+  .radio-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--dark);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .radio-option:hover { border-color: var(--sky); background: var(--sky-light); }
+
+  .radio-option.active {
+    border-color: var(--sky);
+    background: var(--sky);
+    color: white;
+    font-weight: 600;
+  }
+
+  .textarea-field {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--dark);
+    background: #FAFEFF;
+    outline: none;
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.2s;
+  }
+
+  .textarea-field:focus { border-color: var(--sky); background: white; }
+
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1.5px solid var(--border);
+  }
+
+  .section-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--sky-light);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    color: var(--dark);
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--sky), #2196B0);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(58,174,220,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(58,174,220,0.4); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .progress-wrap { max-width: 640px; margin: 0 auto 20px; }
+  .progress-bar-bg { height: 5px; background: var(--border); border-radius: 10px; overflow: hidden; }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--sky), var(--gold));
+    border-radius: 10px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-info { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .progress-info span { font-size: 12px; color: var(--muted); }
+
+  .section-card { display: none; }
+  .section-card.visible { display: block; }
+
+  .thankyou { display: none; text-align: center; padding: 48px 24px; }
+  .thankyou.visible { display: block; }
+  .thankyou-icon { font-size: 60px; margin-bottom: 16px; }
+  .thankyou h2 { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--dark); margin-bottom: 10px; }
+  .thankyou p { color: var(--muted); font-size: 14px; line-height: 1.7; }
+
+  .gold-line { width: 60px; height: 3px; background: var(--gold); border-radius: 10px; margin: 16px auto; }
+  .divider { border: none; border-top: 1.5px dashed var(--border); margin: 20px 0; }
+
+  .nav-row { display: flex; gap: 10px; }
+
+  .back-btn {
+    flex: 1;
+    padding: 13px;
+    background: white;
+    color: var(--sky);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .next-btn {
+    flex: 2;
+    padding: 13px;
+    background: var(--sky);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 3px 12px rgba(58,174,220,0.25);
+  }
+
+  .next-btn:hover { background: #2196B0; }
+  .back-btn:hover { border-color: var(--sky); }
+
+  .info-note {
+    background: var(--sky-light);
+    border-left: 3px solid var(--sky);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--dark);
+    margin-bottom: 18px;
+  }
+
+  /* Hadiah / gift box */
+  .gift-box {
+    background: linear-gradient(135deg, var(--gold-light), #FFFBF2);
+    border: 1.5px dashed var(--gold);
+    border-radius: 16px;
+    padding: 22px;
+    margin-top: 28px;
+    text-align: center;
+  }
+
+  .gift-icon { font-size: 42px; margin-bottom: 8px; }
+
+  .gift-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    color: var(--dark);
+    margin-bottom: 8px;
+  }
+
+  .gift-box p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  .gift-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--gold), #B8842A);
+    color: white;
+    padding: 13px 26px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 4px 16px rgba(201,150,58,0.35);
+    transition: all 0.2s;
+  }
+
+  .gift-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(201,150,58,0.45); }
+
+  @media (max-width: 480px) {
+    .scale-btn { padding: 8px 2px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-badge">
+    <div class="logo-icon">🕌</div>
+    <div class="logo-text">Yayasan <span>Ar-Rahmah</span> Sulawesi</div>
+  </div>
+  <h1>Survei Kepuasan<br>Orang Tua TKIT Ar-Rahmah</h1>
+  <p class="subtitle">Bantu kami terus berkembang untuk putra-putri terbaik</p>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span id="stepLabel">Langkah 1 dari 7</span>
+    <span id="stepPct">0%</span>
+  </div>
+  <div class="progress-bar-bg">
+    <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+  </div>
+</div>
+
+<!-- STEP 1: Identitas -->
+<div class="card section-card visible" id="step1">
+  <div class="step-label">Langkah 1</div>
+  <div class="card-title">Identitas Responden</div>
+
+  <div class="info-note">📋 Survei ini diisi oleh <strong>Orang Tua / Wali Murid TKIT Ar-Rahmah</strong></div>
+
+  <div class="field">
+    <label>Nama Ayah/Bunda atau Inisial <span style="color:var(--muted);font-weight:300">(opsional)</span></label>
+    <input type="text" id="namaInput" placeholder="Contoh: Bunda Aisyah / A.R.">
+  </div>
+
+  <div class="field">
+    <label>Kelas Anak</label>
+    <select id="kelasInput">
+      <option value="">-- Pilih Kelas --</option>
+      <option value="Kelas Sultan Malikussaid">Kelas Sultan Malikussaid</option>
+      <option value="Kelas Sultan Hasanuddin">Kelas Sultan Hasanuddin</option>
+      <option value="Kelas Sultan Alauddin">Kelas Sultan Alauddin</option>
+    </select>
+  </div>
+
+  <div style="margin-top:20px;">
+    <button class="next-btn" style="width:100%" onclick="goStep(2)">Lanjut →</button>
+  </div>
+</div>
+
+<!-- STEP 2: Komunikasi & Layanan Sekolah -->
+<div class="card section-card" id="step2">
+  <div class="step-label">Langkah 2</div>
+  <div class="card-title">Komunikasi & Layanan Sekolah</div>
+
+  <div class="info-note">
+    Nilai skala: <strong>1</strong> = Sangat Tidak Puas &nbsp;|&nbsp; <strong>5</strong> = Sangat Puas
+  </div>
+
+  <div id="qContainer2"></div>
+
+  <div class="nav-row">
+    <button class="back-btn" onclick="goStep(1)">← Kembali</button>
+    <button class="next-btn" onclick="nextStep(2,3)">Lanjut →</button>
+  </div>
+</div>
+
+<!-- STEP 3: Kebersihan & Keamanan -->
+<div class="card section-card" id="step3">
+  <div class="step-label">Langkah 3</div>
+  <div class="card-title">Kebersihan & Keamanan</div>
+
+  <div class="info-note">
+    Nilai skala: <strong>1</strong> = Sangat Tidak Puas &nbsp;|&nbsp; <strong>5</strong> = Sangat Puas
+  </div>
+
+  <div id="qContainer3"></div>
+
+  <div class="nav-row">
+    <button class="back-btn" onclick="goStep(2)">← Kembali</button>
+    <button class="next-btn" onclick="nextStep(3,4)">Lanjut →</button>
+  </div>
+</div>
+
+<!-- STEP 4: Keuangan & Kepemimpinan Yayasan -->
+<div class="card section-card" id="step4">
+  <div class="step-label">Langkah 4</div>
+  <div class="card-title">Keuangan & Kepemimpinan Yayasan</div>
+
+  <div class="info-note">
+    Nilai skala: <strong>1</strong> = Sangat Tidak Puas &nbsp;|&nbsp; <strong>5</strong> = Sangat Puas
+  </div>
+
+  <div id="qContainer4"></div>
+
+  <div class="nav-row">
+    <button class="back-btn" onclick="goStep(3)">← Kembali</button>
+    <button class="next-btn" onclick="nextStep(4,5)">Lanjut →</button>
+  </div>
+</div>
+
+<!-- STEP 5: Capaian Pendidikan Anak -->
+<div class="card section-card" id="step5">
+  <div class="step-label">Langkah 5</div>
+  <div class="card-title">Capaian Pendidikan Anak</div>
+
+  <div class="info-note">
+    Nilai skala: <strong>1</strong> = Sangat Tidak Puas &nbsp;|&nbsp; <strong>5</strong> = Sangat Puas
+  </div>
+
+  <div id="qContainer5"></div>
+
+  <div class="nav-row">
+    <button class="back-btn" onclick="goStep(4)">← Kembali</button>
+    <button class="next-btn" onclick="nextStep(5,6)">Lanjut →</button>
+  </div>
+</div>
+
+<!-- STEP 6: Rekomendasi & Rencana Lanjutan -->
+<div class="card section-card" id="step6">
+  <div class="step-label">Langkah 6</div>
+  <div class="card-title">Rekomendasi & Rencana Lanjutan</div>
+
+  <div class="info-note">
+    Nilai skala: <strong>1</strong> = Sangat Tidak Mungkin &nbsp;|&nbsp; <strong>5</strong> = Sangat Mungkin
+  </div>
+
+  <div id="qContainer6"></div>
+
+  <hr class="divider">
+
+  <div class="question-block">
+    <div class="q-label">💬 Saran atau masukan untuk sekolah:</div>
+    <textarea class="textarea-field" id="saranInput" placeholder="Tuliskan saran Anda di sini..."></textarea>
+  </div>
+
+  <div class="nav-row">
+    <button class="back-btn" onclick="goStep(5)">← Kembali</button>
+    <button class="next-btn" onclick="goStep(7)">Lanjut →</button>
+  </div>
+</div>
+
+<!-- STEP 7: Konfirmasi & Kirim -->
+<div class="card section-card" id="step7">
+  <div class="step-label">Langkah 7</div>
+  <div class="card-title">Konfirmasi & Kirim</div>
+
+  <div id="summaryBox" style="background:var(--sky-light);border-radius:12px;padding:18px;margin-bottom:20px;font-size:13px;line-height:1.8;color:var(--dark)"></div>
+
+  <div style="margin-bottom:16px;font-size:13px;color:var(--muted);text-align:center">
+    Pastikan jawaban sudah benar sebelum mengirim.
+  </div>
+
+  <div class="nav-row">
+    <button class="back-btn" onclick="goStep(6)">← Kembali</button>
+    <button class="submit-btn" onclick="submitSurvey()" style="flex:2">
+      ✅ Kirim Survei
+    </button>
+  </div>
+</div>
+
+<!-- Thank You -->
+<div class="card thankyou" id="thankyouScreen">
+  <div class="thankyou-icon">🌟</div>
+  <h2>Jazakallahu Khairan!</h2>
+  <div class="gold-line"></div>
+  <p>Terima kasih telah mengisi survei kepuasan.<br>Masukan Anda sangat berharga bagi kami untuk terus meningkatkan kualitas layanan pendidikan di TKIT Ar-Rahmah.</p>
+  <br>
+  <p style="font-size:12px;color:var(--gold)">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
+
+  <div class="gift-box">
+    <div class="gift-icon">🎁</div>
+    <h3>Hadiah Untuk Ayah/Bunda</h3>
+    <p>Sebagai ucapan terima kasih, silakan unduh ebook <strong>"50 Doa untuk Anakku Tercinta"</strong> — kumpulan doa pilihan yang bisa Ayah/Bunda amalkan bersama Ananda di rumah, sebagai bekal kebaikan untuk keluarga.</p>
+    <a class="gift-btn" href="https://drive.google.com/uc?export=download&id=1AgGG5mCugsApDPVyIOF8gkmvdPiJgtYq" target="_blank" rel="noopener">
+      📥 Unduh Ebook Gratis
+    </a>
+  </div>
+</div>
+
+<script>
+  // State
+  let state = {
+    step: 1,
+    nama: '',
+    kelas: '',
+    answers: {},
+    radioAnswers: {},
+    saran: ''
+  };
+
+  // Pertanyaan TKIT — dikelompokkan per langkah (step) agar tidak terlalu panjang
+  const questionsTKIT = [
+    // Komunikasi & Informasi (Langkah 2)
+    { id:'q1', step:2, section:'📢 Komunikasi & Informasi', text:'Informasi kegiatan dan pengumuman sekolah disampaikan dengan jelas dan tepat waktu.' },
+    { id:'q2', step:2, section:null, text:'Pihak sekolah mudah dihubungi dan responsif saat orang tua membutuhkan informasi.' },
+    // Layanan Umum Sekolah (Langkah 2)
+    { id:'q3', step:2, section:'🏫 Layanan Umum Sekolah', text:'Staf Tata Usaha (TU) melayani keperluan administrasi dengan ramah dan cepat.' },
+    // Kebersihan (Langkah 3)
+    { id:'q5', step:3, section:'🧹 Kebersihan Sekolah', text:'Ruang kelas, toilet, dan area umum sekolah terjaga kebersihannya setiap hari.' },
+    { id:'q6', step:3, section:null, text:'Petugas kebersihan bekerja dengan sigap dan menjaga kerapian lingkungan sekolah.' },
+    // Keamanan (Langkah 3)
+    { id:'q7', step:3, section:'🔒 Keamanan (Security)', text:'Petugas keamanan menjaga pintu masuk dan memantau lingkungan sekolah dengan baik.' },
+    { id:'q8', step:3, section:null, text:'Saya merasa aman menitipkan anak di lingkungan sekolah ini.' },
+    // Keuangan & Administrasi (Langkah 4)
+    { id:'q9', step:4, section:'💰 Keuangan & Administrasi', text:'Tagihan dan informasi keuangan (SPP, biaya kegiatan) disampaikan dengan transparan.' },
+    { id:'q10', step:4, section:null, text:'Proses pembayaran dan administrasi keuangan di sekolah mudah dan tidak berbelit.' },
+    // Yayasan & Kepala Sekolah (Langkah 4)
+    { id:'q11', step:4, section:'🌟 Yayasan & Kepala Sekolah', text:'Kepala sekolah terlihat aktif memimpin dan peduli terhadap perkembangan sekolah.' },
+    { id:'q12', step:4, section:null, text:'Kebijakan dan program yayasan mendukung kualitas pendidikan anak saya.' },
+    // Capaian Pendidikan Anak (Langkah 5)
+    { id:'q13', step:5, section:'🎓 Capaian Pendidikan Anak', text:'Anak menunjukkan perkembangan motorik, bahasa, dan kemampuan dasar (mengenal huruf/angka, warna, bentuk) sesuai usianya.' },
+    { id:'q14', step:5, section:null, text:'Adab dan akhlak anak (sopan santun, kemandirian, kedisiplinan) semakin baik sejak bersekolah di sini.' },
+    { id:'q15', step:5, section:null, text:'Kepercayaan diri anak (berani tampil, bertanya, dan bergaul dengan teman) semakin meningkat.' },
+    { id:'q16', step:5, section:null, text:'Hafalan doa harian, surah pendek, dan praktik ibadah sederhana anak menunjukkan kemajuan.' },
+    // NPS (Langkah 6)
+    { id:'nps', step:6, section:'📣 Rekomendasi', text:'Seberapa besar kemungkinan Bapak/Ibu merekomendasikan TKIT Ar-Rahmah kepada keluarga atau teman?', scaleLabels:['Sangat Tidak Mungkin','Sangat Mungkin'] },
+  ];
+
+  // Pertanyaan pilihan ganda — rencana lanjutan ke SD (Langkah 6)
+  const rencanaTKIT = [
+    {
+      id: 'rencanaSD',
+      step: 6,
+      section: '🎒 Rencana Lanjutan ke SD',
+      text: 'Setelah lulus TK, ke mana Bapak/Ibu berencana melanjutkan pendidikan anak?',
+      options: ['SDIT Ar-Rahmah', 'Sekolah negeri/swasta lain', 'Belum menentukan'],
+    },
+    {
+      id: 'alasanLanjut',
+      step: 6,
+      section: null,
+      text: 'Apa alasan utama yang mendasari pertimbangan tersebut?',
+      options: [
+        'Kualitas akademik & kurikulum',
+        'Pembinaan akhlak & tahfidz Al-Quran',
+        'Lokasi/jarak dari rumah',
+        'Biaya pendidikan',
+        'Reputasi & track record sekolah',
+        'Fasilitas & lingkungan sekolah',
+        'Rekomendasi keluarga/teman',
+      ],
+    },
+  ];
+
+  const steps = ['step1','step2','step3','step4','step5','step6','step7'];
+  const totalSteps = 7;
+
+  function updateProgress(step) {
+    const pct = Math.round(((step-1)/totalSteps)*100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('stepLabel').textContent = `Langkah ${step} dari ${totalSteps}`;
+    document.getElementById('stepPct').textContent = pct + '%';
+  }
+
+  function sectionHead(section) {
+    return `<div class="section-head"><div class="section-icon">${section.split(' ')[0]}</div><div class="section-title">${section.replace(/^\S+\s/,'')}</div></div>`;
+  }
+
+  function buildQuestions(stepNum) {
+    let html = '';
+
+    questionsTKIT.forEach((q, i) => {
+      if (q.step !== stepNum) return;
+      if (q.section) {
+        html += sectionHead(q.section);
+      }
+      const labels = q.scaleLabels || ['Sangat Tidak Puas','Sangat Puas'];
+      html += `
+        <div class="question-block">
+          <div class="q-label"><span class="q-num">${i+1}</span>${q.text}</div>
+          <div class="scale-row">
+            ${[1,2,3,4,5].map(n => `<button class="scale-btn" id="${q.id}_${n}" onclick="setAnswer('${q.id}',${n})">${n}</button>`).join('')}
+          </div>
+          <div class="scale-labels">
+            <span>${labels[0]}</span>
+            <span>${labels[1]}</span>
+          </div>
+        </div>`;
+    });
+
+    // Pertanyaan pilihan ganda rencana lanjut SD (hanya di Langkah 6)
+    if (stepNum === 6) {
+      rencanaTKIT.forEach((q) => {
+        if (q.section) {
+          html += sectionHead(q.section);
+        }
+        html += `
+          <div class="question-block">
+            <div class="q-label">${q.text}</div>
+            <div id="radio_${q.id}">
+              ${q.options.map(opt => `<button class="radio-option" onclick="setRadioAnswer('${q.id}','${opt.replace(/'/g, "\\'")}', this)">${opt}</button>`).join('')}
+            </div>
+          </div>`;
+      });
+    }
+
+    document.getElementById(`qContainer${stepNum}`).innerHTML = html;
+
+    // Pulihkan jawaban yang sudah dipilih sebelumnya (saat kembali ke langkah ini)
+    questionsTKIT.forEach(q => {
+      if (q.step === stepNum && state.answers[q.id] !== undefined) {
+        setAnswer(q.id, state.answers[q.id]);
+      }
+    });
+    if (stepNum === 6) {
+      rencanaTKIT.forEach(q => {
+        const val = state.radioAnswers[q.id];
+        if (val) {
+          const container = document.getElementById(`radio_${q.id}`);
+          if (container) {
+            container.querySelectorAll('.radio-option').forEach(b => {
+              if (b.textContent === val) b.classList.add('active');
+            });
+          }
+        }
+      });
+      // Pulihkan isi kotak saran
+      const saranEl = document.getElementById('saranInput');
+      if (saranEl) saranEl.value = state.saran || '';
+    }
+  }
+
+  function setAnswer(qid, val) {
+    state.answers[qid] = val;
+    [1,2,3,4,5].forEach(n => {
+      const btn = document.getElementById(`${qid}_${n}`);
+      if(btn) { btn.className = 'scale-btn'; }
+    });
+    const selBtn = document.getElementById(`${qid}_${val}`);
+    if(selBtn) selBtn.classList.add(`sel-${val}`);
+  }
+
+  function setRadioAnswer(qid, value, el) {
+    state.radioAnswers[qid] = value;
+    const container = document.getElementById(`radio_${qid}`);
+    if (container) {
+      container.querySelectorAll('.radio-option').forEach(b => b.classList.remove('active'));
+    }
+    el.classList.add('active');
+  }
+
+  function buildSummary() {
+    const answered = Object.keys(state.answers).length;
+    const total = questionsTKIT.length;
+
+    // Rata-rata dihitung dari pertanyaan kepuasan saja (tidak termasuk NPS)
+    const satisfactionAnswers = questionsTKIT
+      .filter(q => q.id !== 'nps')
+      .map(q => state.answers[q.id])
+      .filter(v => v !== undefined);
+    const avg = satisfactionAnswers.length
+      ? (satisfactionAnswers.reduce((a,b)=>a+b,0)/satisfactionAnswers.length).toFixed(1)
+      : '-';
+
+    const nps = state.answers.nps || '-';
+    const nama = document.getElementById('namaInput').value || 'Anonim';
+    const kelas = document.getElementById('kelasInput').value || '-';
+
+    state.nama = nama;
+    state.kelas = kelas;
+    state.saran = document.getElementById('saranInput').value;
+
+    const rencana = state.radioAnswers.rencanaSD || '-';
+    const alasan = state.radioAnswers.alasanLanjut || '-';
+
+    document.getElementById('summaryBox').innerHTML = `
+      <strong>📋 Ringkasan Survei</strong><br><br>
+      📝 <strong>Nama:</strong> ${nama}<br>
+      🎓 <strong>Kelas:</strong> ${kelas}<br>
+      ✅ <strong>Pertanyaan dijawab:</strong> ${answered} / ${total}<br>
+      ⭐ <strong>Rata-rata kepuasan:</strong> ${avg} / 5<br>
+      📣 <strong>Skor Rekomendasi (NPS):</strong> ${nps} / 5<br>
+      🎒 <strong>Rencana SD:</strong> ${rencana}<br>
+      💡 <strong>Alasan:</strong> ${alasan}<br>
+      ${state.saran ? `💬 <strong>Saran:</strong> ${state.saran}` : ''}
+    `;
+  }
+
+  // Validasi ringan sebelum lanjut ke langkah berikutnya
+  function nextStep(current, next) {
+    const stepQuestions = questionsTKIT.filter(q => q.step === current);
+    const unanswered = stepQuestions.filter(q => state.answers[q.id] === undefined).length;
+    if (unanswered > 0) {
+      if (!confirm(`Masih ada ${unanswered} pertanyaan di bagian ini yang belum dijawab. Lanjutkan ke bagian berikutnya?`)) return;
+    }
+    goStep(next);
+  }
+
+  function goStep(target) {
+    if (target >= 2 && target <= 6) buildQuestions(target);
+    if (target === 7) buildSummary();
+
+    steps.forEach(id => document.getElementById(id).classList.remove('visible'));
+    document.getElementById(`step${target}`).classList.add('visible');
+    state.step = target;
+    updateProgress(target);
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+
+  // ⚙️ GANTI dengan URL Apps Script Anda setelah deploy
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbwKFLrfEo4NacT1B9jhLICHkP8BmgD4y-uuMRT5LMCzZY4SXWBjlahXg4CldxikRSNSNQ/exec';
+
+  async function submitSurvey() {
+    const answered = Object.keys(state.answers).length;
+    const total = questionsTKIT.length;
+
+    if (answered < total) {
+      const missing = total - answered;
+      if (!confirm(`Masih ada ${missing} pertanyaan belum dijawab. Tetap kirim?`)) return;
+    }
+
+    const flatAnswers = {};
+    questionsTKIT.forEach(q => { flatAnswers[q.id] = state.answers[q.id] || ''; });
+
+    const satisfactionAnswers = questionsTKIT
+      .filter(q => q.id !== 'nps')
+      .map(q => state.answers[q.id])
+      .filter(v => v !== undefined);
+    const avg = satisfactionAnswers.length
+      ? (satisfactionAnswers.reduce((a,b)=>a+b,0)/satisfactionAnswers.length).toFixed(2)
+      : '';
+
+    const payload = {
+      timestamp: new Date().toLocaleString('id-ID'),
+      unit: 'TKIT',
+      unitName: 'TKIT Ar-Rahmah',
+      respondentType: 'Orang Tua',
+      nama: state.nama || 'Anonim',
+      kelas: state.kelas || '-',
+      ...flatAnswers,
+      rencanaSD: state.radioAnswers.rencanaSD || '',
+      alasanLanjut: state.radioAnswers.alasanLanjut || '',
+      rata2: avg,
+      saran: state.saran || ''
+    };
+
+    const submitBtn = document.querySelector('.submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '⏳ Mengirim data...';
+
+    try {
+      await fetch(GAS_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      showThankyou();
+    } catch (err) {
+      console.error('Submit error:', err);
+      alert('Gagal mengirim data. Periksa koneksi internet atau URL Apps Script.');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '✅ Kirim Survei';
+    }
+  }
+
+  function showThankyou() {
+    steps.forEach(id => document.getElementById(id).classList.remove('visible'));
+    document.getElementById('thankyouScreen').classList.add('visible');
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('stepLabel').textContent = 'Selesai ✓';
+    document.getElementById('stepPct').textContent = '100%';
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+
+  // Init
+  updateProgress(1);
+</script>
+</body>
+</html>
